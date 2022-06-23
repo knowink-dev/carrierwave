@@ -216,7 +216,7 @@ describe CarrierWave::RMagick do
         change_locale_and_store_translations(:foo, {}) do
           lambda do
             @instance.resize_to_limit(200, 200)
-          end.should raise_exception( CarrierWave::ProcessingError, /Not a JPEG/ )
+          end.should raise_exception( CarrierWave::ProcessingError, /Failed to manipulate with rmagick/ )
         end
       end
     end

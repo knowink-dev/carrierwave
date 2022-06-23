@@ -5,10 +5,7 @@ unless defined?(FOG_CREDENTIALS)
   if Fog.mocking?
     # Local and Rackspace don't have fog mock support yet
     mappings = {
-      'AWS'       => [:aws_access_key_id, :aws_secret_access_key],
-      'Google'    => [:google_storage_access_key_id, :google_storage_secret_access_key],
-      # 'Local'     => [:local_root],
-      # 'Rackspace' => [:rackspace_api_key, :rackspace_username]
+      'AWS'       => [:aws_access_key_id, :aws_secret_access_key]
     }
 
     for provider, keys in mappings
@@ -25,9 +22,7 @@ unless defined?(FOG_CREDENTIALS)
 
     mappings = {
       'AWS'       => [:aws_access_key_id, :aws_secret_access_key],
-      'Google'    => [:google_storage_access_key_id, :google_storage_secret_access_key],
       'Local'     => [:local_root],
-      'Rackspace' => [:rackspace_api_key, :rackspace_username]
     }
 
     for provider, keys in mappings

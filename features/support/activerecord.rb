@@ -3,7 +3,7 @@
 require 'carrierwave/mount'
 require File.join(File.dirname(__FILE__), '..', '..', 'spec', 'support', 'activerecord')
 
-class TestMigration < ActiveRecord::Migration
+class TestMigration < ActiveRecord::Migration[6.1]
   def self.up
     create_table :users, :force => true do |t|
       t.column :avatar, :string

@@ -7,7 +7,7 @@ dbconfig = {
   :adapter  => 'postgresql',
   :database => 'carrierwave_test',
   :encoding => 'utf8',
-  :username => 'postgres'
+  :username => ''
 }
 
 ActiveRecord::Base.establish_connection(dbconfig)

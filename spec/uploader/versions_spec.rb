@@ -28,7 +28,7 @@ describe CarrierWave::Uploader do
           version :micro
         end
       end
-      @uploader_class.versions.should have(2).versions
+      @uploader_class.versions.size.should == 2
       @uploader_class.versions.should include :large
       @uploader_class.versions.should include :thumb
       @uploader.large.versions.should be_empty
@@ -60,7 +60,7 @@ describe CarrierWave::Uploader do
     end
 
     it "should remember mount options" do
-      model = mock('a model')
+      model = double('a model')
       @uploader_class.version :thumb
       @uploader = @uploader_class.new(model, :gazelle)
 
@@ -86,14 +86,14 @@ describe CarrierWave::Uploader do
     it "should return the enable processing value of the parent" do
       @uploader_class.enable_processing = false
       thumb = (@uploader_class.version :thumb)[:uploader]
-      thumb.enable_processing.should be_false
+      thumb.enable_processing.should be_falsey
     end
 
     it "should return its own value for enable processing if set" do
       @uploader_class.enable_processing = false
       thumb = (@uploader_class.version :thumb)[:uploader]
       thumb.enable_processing = true
-      thumb.enable_processing.should be_true
+      thumb.enable_processing.should be_truthy
     end
 
     it "should reopen the same class when called multiple times" do
@@ -175,7 +175,7 @@ describe CarrierWave::Uploader do
     describe '#cache!' do
 
       before do
-        CarrierWave.stub!(:generate_cache_id).and_return('1369894322-345-2255')
+        CarrierWave.stub(:generate_cache_id).and_return('1369894322-345-2255')
       end
 
       it "should set store_path with versions" do
@@ -191,8 +191,8 @@ describe CarrierWave::Uploader do
         @uploader.cache!(File.open(file_path('test.jpg')))
         @uploader.current_path.should == public_path('uploads/tmp/1369894322-345-2255/test.jpg')
         @uploader.thumb.current_path.should == public_path('uploads/tmp/1369894322-345-2255/thumb_test.jpg')
-        @uploader.file.exists?.should be_true
-        @uploader.thumb.file.exists?.should be_true
+        @uploader.file.exists?.should be_truthy
+        @uploader.thumb.file.exists?.should be_truthy
       end
 
       it "should cache the files based on the parent" do
@@ -206,7 +206,7 @@ describe CarrierWave::Uploader do
     describe "version with move_to_cache set" do
       before do
         FileUtils.cp(file_path('test.jpg'), file_path('test_copy.jpg'))
-        CarrierWave.stub!(:generate_cache_id).and_return('1369894322-345-2255')
+        CarrierWave.stub(:generate_cache_id).and_return('1369894322-345-2255')
         @uploader_class.send(:define_method, :move_to_cache) do
           true
         end
@@ -221,8 +221,8 @@ describe CarrierWave::Uploader do
         @uploader.cache!(File.open(file_path('test.jpg')))
         @uploader.current_path.should == public_path('uploads/tmp/1369894322-345-2255/test.jpg')
         @uploader.thumb.current_path.should == public_path('uploads/tmp/1369894322-345-2255/thumb_test.jpg')
-        @uploader.file.exists?.should be_true
-        @uploader.thumb.file.exists?.should be_true
+        @uploader.file.exists?.should be_truthy
+        @uploader.thumb.file.exists?.should be_truthy
       end
 
       it "should allow overriding move_to_cache on versions" do
@@ -234,8 +234,8 @@ describe CarrierWave::Uploader do
         @uploader.cache!(File.open(file_path('test.jpg')))
         @uploader.current_path.should == public_path('uploads/tmp/1369894322-345-2255/test.jpg')
         @uploader.thumb.current_path.should == public_path('uploads/tmp/1369894322-345-2255/thumb_test.jpg')
-        @uploader.file.exists?.should be_false
-        @uploader.thumb.file.exists?.should be_true
+        @uploader.file.exists?.should be_falsey
+        @uploader.thumb.file.exists?.should be_truthy
       end
     end
 
@@ -262,30 +262,30 @@ describe CarrierWave::Uploader do
 
         @file = File.open(file_path('test.jpg'))
 
-        @base_stored_file = mock('a stored file')
-        @base_stored_file.stub!(:path).and_return('/path/to/somewhere')
-        @base_stored_file.stub!(:url).and_return('http://www.example.com')
+        @base_stored_file = double('a stored file')
+        @base_stored_file.stub(:path).and_return('/path/to/somewhere')
+        @base_stored_file.stub(:url).and_return('http://www.example.com')
 
-        @thumb_stored_file = mock('a thumb version of a stored file')
-        @thumb_stored_file.stub!(:path).and_return('/path/to/somewhere/thumb')
-        @thumb_stored_file.stub!(:url).and_return('http://www.example.com/thumb')
+        @thumb_stored_file = double('a thumb version of a stored file')
+        @thumb_stored_file.stub(:path).and_return('/path/to/somewhere/thumb')
+        @thumb_stored_file.stub(:url).and_return('http://www.example.com/thumb')
 
-        @preview_stored_file = mock('a preview version of a stored file')
-        @preview_stored_file.stub!(:path).and_return('/path/to/somewhere/preview')
-        @preview_stored_file.stub!(:url).and_return('http://www.example.com/preview')
+        @preview_stored_file = double('a preview version of a stored file')
+        @preview_stored_file.stub(:path).and_return('/path/to/somewhere/preview')
+        @preview_stored_file.stub(:url).and_return('http://www.example.com/preview')
 
-        @storage = mock('a storage engine')
-        @storage.stub!(:store!).and_return(@base_stored_file)
+        @storage = double('a storage engine')
+        @storage.stub(:store!).and_return(@base_stored_file)
 
-        @thumb_storage = mock('a storage engine for thumbnails')
-        @thumb_storage.stub!(:store!).and_return(@thumb_stored_file)
+        @thumb_storage = double('a storage engine for thumbnails')
+        @thumb_storage.stub(:store!).and_return(@thumb_stored_file)
 
-        @preview_storage = mock('a storage engine for previews')
-        @preview_storage.stub!(:store!).and_return(@preview_stored_file)
+        @preview_storage = double('a storage engine for previews')
+        @preview_storage.stub(:store!).and_return(@preview_stored_file)
 
-        @uploader_class.storage.stub!(:new).with(@uploader).and_return(@storage)
-        @uploader_class.version(:thumb)[:uploader].storage.stub!(:new).and_return(@thumb_storage)
-        @uploader_class.version(:preview)[:uploader].storage.stub!(:new).and_return(@preview_storage)
+        @uploader_class.storage.stub(:new).with(@uploader).and_return(@storage)
+        @uploader_class.version(:thumb)[:uploader].storage.stub(:new).and_return(@thumb_storage)
+        @uploader_class.version(:preview)[:uploader].storage.stub(:new).and_return(@preview_storage)
       end
 
       it "should set the current path for the version" do
@@ -434,20 +434,20 @@ describe CarrierWave::Uploader do
 
         @file = File.open(file_path('test.jpg'))
 
-        @base_stored_file = mock('a stored file')
-        @thumb_stored_file = mock('a thumb version of a stored file')
+        @base_stored_file = double('a stored file')
+        @thumb_stored_file = double('a thumb version of a stored file')
 
-        @storage = mock('a storage engine')
-        @storage.stub!(:store!).and_return(@base_stored_file)
+        @storage = double('a storage engine')
+        @storage.stub(:store!).and_return(@base_stored_file)
 
-        @thumb_storage = mock('a storage engine for thumbnails')
-        @thumb_storage.stub!(:store!).and_return(@thumb_stored_file)
+        @thumb_storage = double('a storage engine for thumbnails')
+        @thumb_storage.stub(:store!).and_return(@thumb_stored_file)
 
-        @uploader_class.storage.stub!(:new).with(@uploader).and_return(@storage)
-        @uploader_class.version(:thumb)[:uploader].storage.stub!(:new).with(@uploader.thumb).and_return(@thumb_storage)
+        @uploader_class.storage.stub(:new).with(@uploader).and_return(@storage)
+        @uploader_class.version(:thumb)[:uploader].storage.stub(:new).with(@uploader.thumb).and_return(@thumb_storage)
 
-        @base_stored_file.stub!(:delete)
-        @thumb_stored_file.stub!(:delete)
+        @base_stored_file.stub(:delete)
+        @thumb_stored_file.stub(:delete)
 
         @uploader.store!(@file)
       end
@@ -479,22 +479,22 @@ describe CarrierWave::Uploader do
 
         @file = File.open(file_path('test.jpg'))
 
-        @base_stored_file = mock('a stored file')
-        @base_stored_file.stub!(:path).and_return('/path/to/somewhere')
-        @base_stored_file.stub!(:url).and_return('http://www.example.com')
+        @base_stored_file = double('a stored file')
+        @base_stored_file.stub(:path).and_return('/path/to/somewhere')
+        @base_stored_file.stub(:url).and_return('http://www.example.com')
 
-        @thumb_stored_file = mock('a thumb version of a stored file')
-        @thumb_stored_file.stub!(:path).and_return('/path/to/somewhere/thumb')
-        @thumb_stored_file.stub!(:url).and_return('http://www.example.com/thumb')
+        @thumb_stored_file = double('a thumb version of a stored file')
+        @thumb_stored_file.stub(:path).and_return('/path/to/somewhere/thumb')
+        @thumb_stored_file.stub(:url).and_return('http://www.example.com/thumb')
 
-        @storage = mock('a storage engine')
-        @storage.stub!(:retrieve!).and_return(@base_stored_file)
+        @storage = double('a storage engine')
+        @storage.stub(:retrieve!).and_return(@base_stored_file)
 
-        @thumb_storage = mock('a storage engine for thumbnails')
-        @thumb_storage.stub!(:retrieve!).and_return(@thumb_stored_file)
+        @thumb_storage = double('a storage engine for thumbnails')
+        @thumb_storage.stub(:retrieve!).and_return(@thumb_stored_file)
 
-        @uploader_class.storage.stub!(:new).with(@uploader).and_return(@storage)
-        @uploader_class.version(:thumb)[:uploader].storage.stub!(:new).with(@uploader.thumb).and_return(@thumb_storage)
+        @uploader_class.storage.stub(:new).with(@uploader).and_return(@storage)
+        @uploader_class.version(:thumb)[:uploader].storage.stub(:new).with(@uploader.thumb).and_return(@thumb_storage)
       end
 
       it "should set the current path" do
@@ -542,7 +542,7 @@ describe CarrierWave::Uploader do
 
     describe '#cache!' do
       before do
-        CarrierWave.stub!(:generate_cache_id).and_return('1369894322-345-2255')
+        CarrierWave.stub(:generate_cache_id).and_return('1369894322-345-2255')
       end
 
       it "should cache the files based on the version" do

@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'bundler/setup'
+require 'byebug'
 
 require 'tempfile'
 require 'time'
@@ -14,7 +15,7 @@ require 'sham_rack'
 require 'mini_magick'
 require 'generator_spec'
 
-require 'fog'
+#require 'fog'
 require 'storage/fog_helper'
 
 unless ENV['REMOTE'] == 'true'
@@ -44,8 +45,8 @@ module CarrierWave
   module Test
     module MockStorage
       def mock_storage(kind)
-        storage = mock("storage for #{kind} uploader")
-        storage.stub!(:setup!)
+        storage = double("storage for #{kind} uploader")
+        storage.stub(:setup!)
         storage
       end
     end
@@ -82,7 +83,7 @@ module CarrierWave
         else
           t = StringIO.new
         end
-        t.stub!(:local_path => "",
+        t.stub(:local_path => "",
                 :original_filename => filename || fake_name,
                 :content_type => mime_type)
         return t
@@ -125,3 +126,5 @@ RSpec.configure do |config|
   config.include CarrierWave::Test::I18nHelpers
   config.include CarrierWave::Test::ManipulationHelpers
 end
+
+RSpec::Expectations.configuration.on_potential_false_positives = :nothing
