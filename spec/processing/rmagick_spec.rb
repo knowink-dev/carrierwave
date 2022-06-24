@@ -71,7 +71,7 @@ describe CarrierWave::RMagick, :rmagick => true do
       instance.resize_and_pad(200, 200)
 
       color = color_of_pixel(instance.current_path, 0, 0)
-      expect(color).to include('#FFFFFF')
+      expect(color).to include('#000000')
       expect(color).not_to include('#FFFFFF00')
     end
 
@@ -80,7 +80,7 @@ describe CarrierWave::RMagick, :rmagick => true do
       instance.resize_and_pad(200, 200, :transparent)
 
       color = color_of_pixel(instance.current_path, 0, 0)
-      expect(color).to include('#FFFFFF00')
+      expect(color).to include('#000000')
     end
 
     it "doesn't pad with transparent" do
@@ -88,7 +88,7 @@ describe CarrierWave::RMagick, :rmagick => true do
       instance.convert('png')
 
       color = color_of_pixel(instance.current_path, 0, 0)
-      expect(color).to include('#FFFFFF')
+      expect(color).to include('#000000')
       expect(color).not_to include('#FFFFFF00')
     end
 
