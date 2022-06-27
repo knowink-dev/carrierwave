@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.specification_version = 3
   s.licenses = ["MIT"]
+  s.required_ruby_version = ">= 3.1"
 
   s.add_dependency "activesupport", "~> 6.1.x"
   s.add_dependency "activemodel", "~> 6.1.0"
@@ -42,4 +43,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "nokogiri"
   s.add_development_dependency "timecop"
   s.add_development_dependency "generator_spec"
+  s.add_development_dependency "byebug"
 end
