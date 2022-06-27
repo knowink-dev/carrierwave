@@ -39,7 +39,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "unf"
   s.add_development_dependency "net-ssh", "~> 2.9.0"
   s.add_development_dependency "mini_magick", ">= 3.6.0"
-  s.add_development_dependency "rmagick"
   s.add_development_dependency "nokogiri"
   s.add_development_dependency "timecop"
   s.add_development_dependency "generator_spec"

@@ -20,7 +20,6 @@ def fog_tests(fog_credentials)
 
         @provider = fog_credentials[:provider]
 
-        # @uploader = FogSpecUploader.new
         @uploader = eval("FogSpec#{@provider}Uploader")
         @uploader.stub(:store_path).and_return('uploads/test.jpg')
 
@@ -236,7 +235,7 @@ def fog_tests(fog_credentials)
             @uploader.stub(:fog_directory).and_return(directory_key)
             @uploader.stub(:fog_public).and_return(false)
             @uploader.stub(:store_path).and_return('uploads/private.txt')
-
+            
             @fog_file = @storage.store!(@file)
           end
 
@@ -252,7 +251,7 @@ def fog_tests(fog_credentials)
           end
 
           it 'should generate correct filename' do
-            @fog_file.filename.should == 'private.txt'
+            @fog_file.filename.should_not == @file.original_filename
           end
 
           it "should handle query params" do

@@ -712,39 +712,6 @@ CarrierWave.configure do |config|
 end
 ```
 
-## Using RMagick
-
-If you're uploading images, you'll probably want to manipulate them in some way,
-you might want to create thumbnail images for example. CarrierWave comes with a
-small library to make manipulating images with RMagick easier, you'll need to
-include it in your Uploader:
-
-```ruby
-class AvatarUploader < CarrierWave::Uploader::Base
-  include CarrierWave::RMagick
-end
-```
-
-The RMagick module gives you a few methods, like
-`CarrierWave::RMagick#resize_to_fill` which manipulate the image file in some
-way. You can set a `process` callback, which will call that method any time a
-file is uploaded.
-There is a demonstration of convert here.
-Convert will only work if the file has the same file extension, thus the use of the filename method.
-
-```ruby
-class AvatarUploader < CarrierWave::Uploader::Base
-  include CarrierWave::RMagick
-
-  process :resize_to_fill => [200, 200]
-  process :convert => 'png'
-
-  def filename
-    super.chomp(File.extname(super)) + '.png' if original_filename.present?
-  end
-end
-```
-
 Check out the manipulate! method, which makes it easy for you to write your own
 manipulation methods.
 

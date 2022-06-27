@@ -17,7 +17,10 @@ class TestMigration < ActiveRecord::Migration[6.1]
   end
 end
 
-class Event < ActiveRecord::Base; end # setup a basic AR class for testing
+# setup a basic AR class for testing
+class Event < ActiveRecord::Base
+  include ActiveModel
+end 
 $arclass = 0
 
 describe CarrierWave::ActiveRecord do
@@ -96,22 +99,6 @@ describe CarrierWave::ActiveRecord do
         expect(JSON.parse({:data => @event.image}.to_json)).to eq({"data"=>{"image"=>{"url"=>"/uploads/test.jpeg"}}})
       end
 
-      it "should return valid XML when to_xml is called when image is nil" do
-        expect(@event[:image]).to be_nil
-        hash = Hash.from_xml(@event.to_xml)["event#{$arclass}"]
-        expect(hash.keys).to include("image")
-        expect(hash["image"].keys).to include("url")
-        expect(hash["image"]["url"]).to be_nil
-      end
-
-      it "should return valid XML when to_xml is called when image is present" do
-        @event[:image] = 'test.jpeg'
-        @event.save!
-        @event.reload
-
-        expect(Hash.from_xml(@event.to_xml)["event#{$arclass}"]["image"]).to eq({"url" => "/uploads/test.jpeg"})
-      end
-
       it "should respect options[:only] when passed to as_json for the serializable hash" do
         @event[:image] = 'test.jpeg'
         @event.save!
@@ -133,30 +120,6 @@ describe CarrierWave::ActiveRecord do
         @event.reload
 
         expect(@event.as_json(:only => [:foo], :except => [:id])).to eq({"foo" => nil})
-      end
-
-      it "should respect options[:only] when passed to to_xml for the serializable hash" do
-        @event[:image] = 'test.jpeg'
-        @event.save!
-        @event.reload
-
-        expect(Hash.from_xml(@event.to_xml(:only => [:foo]))["event#{$arclass}"]["image"]).to be_nil
-      end
-
-      it "should respect options[:except] when passed to to_xml for the serializable hash" do
-        @event[:image] = 'test.jpeg'
-        @event.save!
-        @event.reload
-
-        expect(Hash.from_xml(@event.to_xml(:except => [:image]))["event#{$arclass}"]["image"]).to be_nil
-      end
-
-      it "should respect both options[:only] and options[:except] when passed to to_xml for the serializable hash" do
-        @event[:image] = 'test.jpeg'
-        @event.save!
-        @event.reload
-
-        expect(Hash.from_xml(@event.to_xml(:only => [:foo], :except => [:id]))["event#{$arclass}"]["image"]).to be_nil
       end
     end
 
